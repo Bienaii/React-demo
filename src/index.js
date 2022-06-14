@@ -21,9 +21,13 @@ class Board extends React.Component {
       xIsNext: true // 下一步是否X下子
     }
   }
-
+  // 落子
   handleClick(i) {
     const squares = this.state.squares.slice();
+    // 当决出胜者，或者该棋格已有棋子 
+    if(calculateWinner(squares) || squares[i]) {
+      return;
+    }
     squares[i] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
       squares: squares,
@@ -41,7 +45,13 @@ class Board extends React.Component {
   }
 
   render() {
-    const status = 'Next player:' + (this.state.xIsNext ? 'X' : 'O');
+    const winner = calculateWinner(this.state.squares);
+    let status;
+    if(winner) {
+      status = 'Winner: ' + winner;
+    } else {
+      status = 'Next player:' + (this.state.xIsNext ? 'X' : 'O');
+    }
 
     return (
       <div>
@@ -80,6 +90,27 @@ class Game extends React.Component {
       </div>
     )
   }
+}
+
+// 决出胜者
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  for(let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if(squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+  }
+  return null
 }
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
