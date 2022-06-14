@@ -1,16 +1,13 @@
-import React  from "react";
-import ReactDOM from 'react-dom/client';
-import './index.css';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
 
 function Square(props) {
   return (
-    <button
-      className="square"
-      onClick={props.onClick}
-    >
-      { props.value }
+    <button className="square" onClick={props.onClick}>
+      {props.value}
     </button>
-  )
+  );
 }
 
 class Board extends React.Component {
@@ -18,26 +15,34 @@ class Board extends React.Component {
     super(props);
     this.state = {
       squares: Array(9).fill(null),
-      xIsNext: true // 下一步是否X下子
-    }
+      xIsNext: true, // 是否X的回合
+    };
   }
   // 落子
   handleClick(i) {
     const squares = this.state.squares.slice();
-    // 当决出胜者，或者该棋格已有棋子 
-    if(calculateWinner(squares) || squares[i]) {
+    // 当决出胜者，或者该棋格已有棋子
+    if (calculateWinner(squares) || squares[i]) {
       return;
     }
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    squares[i] = this.state.xIsNext ? "X" : "O";
     this.setState({
       squares: squares,
-      xIsNext: !this.state.xIsNext
+      xIsNext: !this.state.xIsNext,
+    });
+  }
+
+  // 重开
+  handleReplay() {
+    this.setState({
+      squares: Array(9).fill(null),
+      xIsNext: true,
     });
   }
 
   renderSquare(i) {
     return (
-      <Square 
+      <Square
         value={this.state.squares[i]}
         onClick={() => this.handleClick(i)}
       />
@@ -46,11 +51,15 @@ class Board extends React.Component {
 
   render() {
     const winner = calculateWinner(this.state.squares);
+    const fullSquare = this.state.squares.every((item) => {
+      // 棋盘满了
+      return item !== null;
+    });
     let status;
-    if(winner) {
-      status = 'Winner: ' + winner;
+    if (winner) {
+      status = "Winner: " + winner;
     } else {
-      status = 'Next player:' + (this.state.xIsNext ? 'X' : 'O');
+      status = "Next player:" + (this.state.xIsNext ? "X" : "O");
     }
 
     return (
@@ -71,6 +80,16 @@ class Board extends React.Component {
           {this.renderSquare(7)}
           {this.renderSquare(8)}
         </div>
+        {winner || fullSquare ? (
+          <button
+            className="game-replay-btn"
+            onClick={() => {
+              this.handleReplay();
+            }}
+          >
+            再来一局!
+          </button>
+        ) : null}
       </div>
     );
   }
@@ -88,7 +107,7 @@ class Game extends React.Component {
           <ol>{/* TODO */}</ol>
         </div>
       </div>
-    )
+    );
   }
 }
 
@@ -104,13 +123,13 @@ function calculateWinner(squares) {
     [0, 4, 8],
     [2, 4, 6],
   ];
-  for(let i = 0; i < lines.length; i++) {
+  for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
-    if(squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
       return squares[a];
     }
   }
-  return null
+  return null;
 }
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
