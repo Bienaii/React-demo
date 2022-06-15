@@ -24,15 +24,16 @@ class Board extends React.Component {
     return (
       <div>
         {
-          Array(3).fill(null).map((item, index1) => {
-            return <div className="board-row" key={index1}>
+          // map函数可以不用return，只是此时 {} 需改为 ()
+          Array(3).fill(null).map((item, index1) => (
+            <div className="board-row" key={index1}>
               {
-                Array(3).fill(null).map((item, index2) => {
-                  return this.renderSquare(index1*3 + index2)
-                })
+                Array(3).fill(null).map((item, index2) => (
+                  this.renderSquare(index1*3 + index2)
+                ))
               }
             </div>
-          })
+          ))
         }
       </div>
     );
