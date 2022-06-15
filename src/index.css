@@ -52,3 +52,7 @@ ol, ul {
 .game-replay-btn {
   margin-top: 20px;
 }
+
+.current-step {
+  font-weight: 700;
+}
