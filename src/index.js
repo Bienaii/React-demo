@@ -11,60 +11,18 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-      xIsNext: true, // 是否X的回合
-    };
-  }
-  // 落子
-  handleClick(i) {
-    const squares = this.state.squares.slice();
-    // 当决出胜者，或者该棋格已有棋子
-    if (calculateWinner(squares) || squares[i]) {
-      return;
-    }
-    squares[i] = this.state.xIsNext ? "X" : "O";
-    this.setState({
-      squares: squares,
-      xIsNext: !this.state.xIsNext,
-    });
-  }
-
-  // 重开
-  handleReplay() {
-    this.setState({
-      squares: Array(9).fill(null),
-      xIsNext: true,
-    });
-  }
-
   renderSquare(i) {
     return (
       <Square
-        value={this.state.squares[i]}
-        onClick={() => this.handleClick(i)}
+        value={this.props.squares[i]}
+        onClick={() => this.props.onClick(i)}
       />
     );
   }
 
   render() {
-    const winner = calculateWinner(this.state.squares);
-    const fullSquare = this.state.squares.every((item) => {
-      // 棋盘满了
-      return item !== null;
-    });
-    let status;
-    if (winner) {
-      status = "Winner: " + winner;
-    } else {
-      status = "Next player:" + (this.state.xIsNext ? "X" : "O");
-    }
-
     return (
       <div>
-        <div className="status">{status}</div>
         <div className="board-row">
           {this.renderSquare(0)}
           {this.renderSquare(1)}
@@ -80,36 +38,89 @@ class Board extends React.Component {
           {this.renderSquare(7)}
           {this.renderSquare(8)}
         </div>
-        {winner || fullSquare ? (
-          <button
-            className="game-replay-btn"
-            onClick={() => {
-              this.handleReplay();
-            }}
-          >
-            再来一局!
-          </button>
-        ) : null}
       </div>
     );
   }
 }
 
 class Game extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      history: [
+        {
+          squares: Array(9).fill(null),
+        },
+      ],
+      xIsNext: true,
+      stepNumber: 0, // 记录第几步
+    };
+  }
+  // 落子
+  handleClick(i) {
+    const history = this.state.history.slice(0, this.state.stepNumber + 1);
+    const current = history[history.length - 1];
+    const squares = current.squares.slice();
+    // 当决出胜者，或者该棋格已有棋子
+    if (calculateWinner(squares) || squares[i]) {
+      return;
+    }
+    squares[i] = this.state.xIsNext ? "X" : "O";
+    this.setState({
+      squares: squares,
+      history: history.concat([
+        {
+          squares: squares,
+        },
+      ]),
+      xIsNext: !this.state.xIsNext,
+      stepNumber: history.length,
+    });
+  }
+  // 跳转某一步棋
+  jumpTo(step) {
+    this.setState({
+      stepNumber: step,
+      xIsNext: step % 2 === 0,
+    });
+  }
+
   render() {
+    const history = this.state.history;
+    const current = history[this.state.stepNumber];
+    const winner = calculateWinner(current.squares);
+    const move = history.map((step, move) => {
+      const description = move ? "Go to move #" + move : "Go to game start";
+      return (
+        <li key={move}>
+          <button onClick={() => this.jumpTo(move)}>{description}</button>
+        </li>
+      );
+    });
+    let status;
+    if (winner) {
+      status = "winner: " + winner;
+    } else {
+      status = "Next player: " + (this.state.xIsNext ? "X" : "O");
+    }
     return (
       <div className="game">
         <div className="game-board">
-          <Board />
+          <Board
+            squares={current.squares}
+            onClick={(i) => this.handleClick(i)}
+          />
         </div>
         <div className="game-info">
-          <div>{/* status */}</div>
-          <ol>{/* TODO */}</ol>
+          <div>{status}</div>
+          <ol>{move}</ol>
         </div>
       </div>
     );
   }
 }
+
+// ========================================
 
 // 决出胜者
 function calculateWinner(squares) {
