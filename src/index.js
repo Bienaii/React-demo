@@ -19,25 +19,21 @@ class Board extends React.Component {
       />
     );
   }
-
+  // 使用两个循环来渲染棋盘格子
   render() {
     return (
       <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
+        {
+          Array(3).fill(null).map((item, index1) => {
+            return <div className="board-row" key={index1}>
+              {
+                Array(3).fill(null).map((item, index2) => {
+                  return this.renderSquare(index1*3 + index2)
+                })
+              }
+            </div>
+          })
+        }
       </div>
     );
   }
