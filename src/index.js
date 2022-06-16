@@ -14,6 +14,7 @@ class Board extends React.Component {
   renderSquare(i) {
     return (
       <Square
+        key={i}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
@@ -51,6 +52,7 @@ class Game extends React.Component {
       ],
       xIsNext: true,
       stepNumber: 0, // 记录第几步
+      sort: true,  // 排序：默认升序
     };
   }
   // 落子
@@ -82,6 +84,13 @@ class Game extends React.Component {
     });
   }
 
+  // 步骤记录列表的排序(升序降序)
+  handleSort() {
+    this.setState({
+      sort: !this.state.sort
+    })
+  }
+
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
@@ -99,6 +108,7 @@ class Game extends React.Component {
         </li>
       );
     });
+    console.log(move);
     let status;
     if (winner) {
       status = "winner: " + winner;
@@ -115,7 +125,8 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{move}</ol>
+          <button onClick={() => this.handleSort()}>{this.state.sort ? "降序" : "升序"}</button>
+          <ol>{this.state.sort ? move : move.reverse()}</ol>
         </div>
       </div>
     );
