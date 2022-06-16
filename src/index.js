@@ -115,6 +115,9 @@ class Game extends React.Component {
     if (winner) {
       status = "winner: " + winner.winnerName;
       line = winner.winnerLine;
+    } else if(this.state.stepNumber ===9) {
+      // 平局
+      status = "There's no winner";
     } else {
       status = "Next player: " + (this.state.xIsNext ? "X" : "O");
       line = [];

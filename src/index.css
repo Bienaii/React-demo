@@ -36,7 +36,8 @@ ol, ul {
   outline: none;
 }
 .highlight {
-  background: #ff0;;
+  background: #ff0;
+  border: 1px dashed #999;
 }
 
 .kbd-navigation .square:focus {
