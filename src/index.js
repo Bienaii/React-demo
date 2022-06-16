@@ -4,7 +4,9 @@ import "./index.css";
 
 function Square(props) {
   return (
-    <button className="square" onClick={props.onClick}>
+    <button
+      className={`square ${props.isHighlight? " highlight" : ""}` } 
+      onClick={props.onClick}>
       {props.value}
     </button>
   );
@@ -15,6 +17,7 @@ class Board extends React.Component {
     return (
       <Square
         key={i}
+        isHighlight={this.props.line.indexOf(i) > -1}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
@@ -108,17 +111,19 @@ class Game extends React.Component {
         </li>
       );
     });
-    console.log(move);
-    let status;
+    let status, line;
     if (winner) {
-      status = "winner: " + winner;
+      status = "winner: " + winner.winnerName;
+      line = winner.winnerLine;
     } else {
       status = "Next player: " + (this.state.xIsNext ? "X" : "O");
+      line = [];
     }
     return (
       <div className="game">
         <div className="game-board">
           <Board
+            line={line}
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
           />
@@ -150,7 +155,10 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return {
+        winnerName: squares[a], // 胜者
+        winnerLine: [a, b, c]  // 连成一条直线的格子
+      };
     }
   }
   return null;
