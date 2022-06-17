@@ -11,9 +11,11 @@ function Square(props) {
     </button>
   );
 }
+console.log('test');
 
 class Board extends React.Component {
   renderSquare(i) {
+    console.log(this.props.line, i);
     return (
       <Square
         key={i}
@@ -118,6 +120,7 @@ class Game extends React.Component {
     } else if(this.state.stepNumber ===9) {
       // 平局
       status = "There's no winner";
+      line = [];
     } else {
       status = "Next player: " + (this.state.xIsNext ? "X" : "O");
       line = [];
