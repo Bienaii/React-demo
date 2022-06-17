@@ -5,13 +5,14 @@ import "./index.css";
 function Square(props) {
   return (
     <button
-      className={`square ${props.isHighlight? " highlight" : ""}` } 
-      onClick={props.onClick}>
+      className={`square ${props.isHighlight ? " highlight" : ""}`}
+      onClick={props.onClick}
+    >
       {props.value}
     </button>
   );
 }
-console.log('test');
+console.log("test");
 
 class Board extends React.Component {
   renderSquare(i) {
@@ -31,15 +32,17 @@ class Board extends React.Component {
       <div>
         {
           // map函数可以不用return，只是此时 {} 需改为 ()
-          Array(3).fill(null).map((item, index1) => (
-            <div className="board-row" key={index1}>
-              {
-                Array(3).fill(null).map((item, index2) => (
-                  this.renderSquare(index1*3 + index2)
-                ))
-              }
-            </div>
-          ))
+          Array(3)
+            .fill(null)
+            .map((item, index1) => (
+              <div className="board-row" key={index1}>
+                {Array(3)
+                  .fill(null)
+                  .map((item, index2) =>
+                    this.renderSquare(index1 * 3 + index2)
+                  )}
+              </div>
+            ))
         }
       </div>
     );
@@ -57,7 +60,7 @@ class Game extends React.Component {
       ],
       xIsNext: true,
       stepNumber: 0, // 记录第几步
-      sort: true,  // 排序：默认升序
+      sort: true, // 排序：默认升序
     };
   }
   // 落子
@@ -92,8 +95,8 @@ class Game extends React.Component {
   // 步骤记录列表的排序(升序降序)
   handleSort() {
     this.setState({
-      sort: !this.state.sort
-    })
+      sort: !this.state.sort,
+    });
   }
 
   render() {
@@ -106,7 +109,7 @@ class Game extends React.Component {
         <li key={move}>
           <button
             onClick={() => this.jumpTo(move)}
-            className={this.state.stepNumber === move ? 'current-step': ''}
+            className={this.state.stepNumber === move ? "current-step" : ""}
           >
             {description}
           </button>
@@ -117,7 +120,7 @@ class Game extends React.Component {
     if (winner) {
       status = "winner: " + winner.winnerName;
       line = winner.winnerLine;
-    } else if(this.state.stepNumber ===9) {
+    } else if (this.state.stepNumber === 9) {
       // 平局
       status = "There's no winner";
       line = [];
@@ -136,7 +139,9 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <button onClick={() => this.handleSort()}>{this.state.sort ? "降序" : "升序"}</button>
+          <button onClick={() => this.handleSort()}>
+            {this.state.sort ? "降序" : "升序"}
+          </button>
           <ol>{this.state.sort ? move : move.reverse()}</ol>
         </div>
       </div>
@@ -163,7 +168,7 @@ function calculateWinner(squares) {
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
       return {
         winnerName: squares[a], // 胜者
-        winnerLine: [a, b, c]  // 连成一条直线的格子
+        winnerLine: [a, b, c], // 连成一条直线的格子
       };
     }
   }
